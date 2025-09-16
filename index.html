@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Media Advertising - Quotation Generator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --secondary: #e8f0fe;
+            --accent: #ff6d00;
+            --dark: #202124;
+            --light: #f8f9fa;
+            --success: #0f9d58;
+            --danger: #db4437;
+            --border: #ddd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7f9;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), #0d47a1);
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .header-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .header-content p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card-title {
+            font-size: 1.6rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+
+        .card-title i {
+            margin-right: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.2);
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -10px;
+        }
+
+        .col {
+            flex: 1;
+            padding: 0 10px;
+            min-width: 300px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn:hover {
+            background: #0d47a1;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: #0c8749;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #c23321;
+        }
+
+        .service-item {
+            background: var(--secondary);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--primary);
+        }
+
+        .service-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .service-title {
+            font-weight: 700;
+            font-size: 19px;
+            color: var(--dark);
+        }
+
+        .remove-service {
+            color: var(--danger);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 22px;
+            padding: 5px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-table th, .summary-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-table th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        .summary-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .summary-table tr:last-child {
+            font-weight: bold;
+            background-color: #f1f8ff;
+        }
+
+        .totals {
+            font-size: 1.3rem;
+            text-align: right;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px dashed var(--border);
+        }
+        
+        .currency {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 20px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .preview-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            margin-top: 40px;
+            display: none;
+        }
+        
+        .preview-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--secondary);
+        }
+        
+        .preview-logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .preview-contact {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .pdf-footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: #666;
+            font-size: 1rem;
+            background: #f8f9fa;
+            border-top: 1px solid var(--border);
+        }
+
+        .main-footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            color: #666;
+            font-size: 1rem;
+            background: #f8f9fa;
+            border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                flex-direction: column;
+            }
+
+            .col {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+                text-align: center;
+            }
+
+            header {
+                padding: 15px;
+            }
+
+            .header-content h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>Sign Media Advertising Agency</h1>
+            </div>
+        </header>
+
+        <div class="content">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-image"></i> Company Logo</h2>
+                <div class="form-group">
+                    <label for="logoUpload">Upload Company Logo</label>
+                    <input type="file" id="logoUpload" accept="image/*">
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-building"></i> Client Information</h2>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="companyName">Company Name *</label>
+                            <input type="text" id="companyName" placeholder="Enter client company name" required>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="contactPerson">Contact Person *</label>
+                            <input type="text" id="contactPerson" placeholder="Enter contact person name" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="contactNumber">Contact Number *</label>
+                            <input type="text" id="contactNumber" placeholder="Enter contact number" required>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" placeholder="Enter email address">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-concierge-bell"></i> Services Selection</h2>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="serviceType">Service Type *</label>
+                            <select id="serviceType">
+                                <option value="">Select a service</option>
+                                <option value="billboard">Billboards & Hoardings</option>
+                                <option value="streamers">Streamers & Pole Signs</option>
+                                <option value="digital">Digital LED Streamers</option>
+                                <option value="wraps">Building Wraps & Uni Poles</option>
+                                <option value="event">Event Management</option>
+                                <option value="mall">Mall & Event Branding</option>
+                                <option value="led">SMD / LED Screens</option>
+                                <option value="bus">Bus Shelters</option>
+                                <option value="roundabout">Roundabout Branding</option>
+                                <option value="signs">3D Signs & Fabrication</option>
+                                <option value="expo">Expo Stall</option>
+                                <option value="vehicle">Vehicle Branding</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="quantity">Quantity *</label>
+                            <input type="number" id="quantity" min="1" value="1" placeholder="Enter quantity">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="rentOption">Rent Option *</label>
+                            <select id="rentOption">
+                                <option value="">Select a rent period</option>
+                                <option value="daily">Daily</option>
+                                <option value="weekly">Weekly</option>
+                                <option value="monthly">Monthly</option>
+                                <option value="quarterly">Quarterly</option>
+                                <option value="semi-annually">Semi-Annually</option>
+                                <option value="annually">Annually</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="rentRate">Rent Rate (PKR) *</label>
+                            <input type="number" id="rentRate" min="0" value="0" placeholder="Enter rent amount">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="size">Size (in sq ft) *</label>
+                            <input type="text" id="size" placeholder="e.g., 10x15, 120 sq ft">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="materialRate">Material Rate (PKR per sq ft) *</label>
+                            <input type="number" id="materialRate" min="0" value="0" placeholder="Enter rate">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="materialDescription">Printing / Material Details</label>
+                    <textarea id="materialDescription" rows="2" placeholder="e.g., Vinyl printing, Flex printing, etc."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="otherCharges">Fitting & Other Charges (PKR)</label>
+                    <input type="number" id="otherCharges" min="0" value="0" placeholder="Enter charges">
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" placeholder="Enter city">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="tmaTax">TMA Tax (PKR) *</label>
+                            <input type="number" id="tmaTax" min="0" value="0" placeholder="Enter TMA tax amount">
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="locationDetails">Location Details *</label>
+                    <textarea id="locationDetails" rows="2" placeholder="Enter specific road/location details"></textarea>
+                </div>
+                <button class="btn" id="addService"><i class="fas fa-plus-circle"></i> Add Service</button>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-list-alt"></i> Selected Services</h2>
+                <div id="servicesList"></div>
+
+                <h2 class="card-title"><i class="fas fa-file-invoice-dollar"></i> Quotation Summary</h2>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Details</th>
+                            <th>Qty</th>
+                            <th>Rent (PKR)</th>
+                            <th>Printing (PKR)</th>
+                            <th>Other (PKR)</th>
+                            <th>Total (PKR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="summaryBody"></tbody>
+                </table>
+
+                <div class="totals">
+                    <div>Subtotal: <span class="currency" id="subtotal">PKR 0.00</span></div>
+                    <div>TMA Tax: <span class="currency" id="tmaTaxAmount">PKR 0.00</span></div>
+                    <div>Grand Total: <span class="currency" id="totalAmount">PKR 0.00</span></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-file-contract"></i> Terms & Conditions</h2>
+                <div class="form-group">
+                    <label for="terms">Terms & Conditions *</label>
+                    <textarea id="terms" rows="4" placeholder="Enter terms and conditions">1. Payment terms: 50% advance, 50% on completion.
+2. Validity of quotation: 30 days.
+3. Installation not included unless specified.
+4. Changes after approval may incur additional charges.
+5. Prices subject to change based on market conditions.
+6. TMA taxes are subject to change as per local authority regulations.
+7. All amounts are in Pakistani Rupees (PKR).</textarea>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" id="resetForm"><i class="fas fa-redo-alt"></i> Reset Form</button>
+                <button class="btn btn-success" id="generatePDF"><i class="fas fa-file-pdf"></i> Download PDF Quotation</button>
+            </div>
+
+            <div class="preview-container" id="pdfPreview">
+                <div class="preview-header">
+                    <img id="previewLogo" class="preview-logo" src="" alt="Company Logo" style="display:none;">
+                    <h1>SIGN MEDIA ADVERTISING AGENCY</h1>
+                    <hr>
+                </div>
+
+                <h3>QUOTATION</h3>
+                <div class="preview-contact">
+                    <p><strong>Client:</strong> <span id="previewClient"></span></p>
+                    <p><strong>Contact Person:</strong> <span id="previewContactPerson"></span></p>
+                    <p><strong>Contact Number:</strong> <span id="previewContactNumber"></span></p>
+                    <p><strong>Email:</strong> <span id="previewEmail"></span></p>
+                </div>
+
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Details</th>
+                            <th>Qty</th>
+                            <th>Amount (PKR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="previewSummaryBody"></tbody>
+                </table>
+
+                <div class="totals">
+                    <div>Subtotal: <span class="currency" id="previewSubtotal">PKR 0.00</span></div>
+                    <div>TMA Tax: <span class="currency" id="previewTmaTaxAmount">PKR 0.00</span></div>
+                    <div>Grand Total: <span class="currency" id="previewTotalAmount">PKR 0.00</span></div>
+                </div>
+
+                <div class="terms-preview">
+                    <h4>Terms & Conditions</h4>
+                    <p id="previewTerms"></p>
+                </div>
+
+                <div class="pdf-footer">
+                    <p><strong>www.signmediaadvertising.com</strong></p>
+                    <p><strong>03338333362</strong></p>
+                    <p>Office # 33, Chenab Market, Susan Road, Faisalabad</p>
+                    <p>Quotation Generator v2.0</p>
+                </div>
+            </div>
+        </div>
+
+        <footer class="main-footer">
+            <p>Sign Media Advertising Agency &copy; 2025. All rights reserved.</p>
+            <p class="address">Office # 33, Chenab Market, Susan Road, Faisalabad</p>
+        </footer>
+    </div>
+
+    <script>
+        let services = [];
+        let logoData = null;
+
+        const addServiceBtn = document.getElementById('addService');
+        const resetFormBtn = document.getElementById('resetForm');
+        const generatePDFBtn = document.getElementById('generatePDF');
+        const servicesList = document.getElementById('servicesList');
+        const summaryBody = document.getElementById('summaryBody');
+        const subtotalEl = document.getElementById('subtotal');
+        const tmaTaxAmountEl = document.getElementById('tmaTaxAmount');
+        const totalAmountEl = document.getElementById('totalAmount');
+        const logoUpload = document.getElementById('logoUpload');
+
+        logoUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    logoData = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        addServiceBtn.addEventListener('click', function() {
+            const serviceType = document.getElementById('serviceType');
+            const quantity = document.getElementById('quantity');
+            const rentOption = document.getElementById('rentOption');
+            const rentRate = document.getElementById('rentRate');
+            const size = document.getElementById('size');
+            const materialRate = document.getElementById('materialRate');
+            const materialDescription = document.getElementById('materialDescription');
+            const otherCharges = document.getElementById('otherCharges');
+            const city = document.getElementById('city');
+            const tmaTax = document.getElementById('tmaTax');
+            const locationDetails = document.getElementById('locationDetails');
+
+            if (!serviceType.value || !quantity.value || !rentOption.value || !rentRate.value || !size.value || !materialRate.value || !city.value || !locationDetails.value || !tmaTax.value) {
+                alert('Please fill in all required fields marked with *');
+                return;
+            }
+
+            const area = calculateArea(size.value);
+            const printingCost = area * parseFloat(materialRate.value);
+            const totalServiceCost = (parseFloat(rentRate.value) + printingCost + parseFloat(otherCharges.value)) * parseInt(quantity.value);
+
+            const service = {
+                id: Date.now(),
+                type: serviceType.options[serviceType.selectedIndex].text,
+                quantity: parseInt(quantity.value),
+                rentOption: rentOption.options[rentOption.selectedIndex].text,
+                rentRate: parseFloat(rentRate.value),
+                size: size.value,
+                area: area,
+                materialRate: parseFloat(materialRate.value),
+                materialDescription: materialDescription.value,
+                printingCost: printingCost,
+                otherCharges: parseFloat(otherCharges.value),
+                city: city.value,
+                tmaTax: parseFloat(tmaTax.value),
+                location: locationDetails.value,
+                total: totalServiceCost
+            };
+
+            services.push(service);
+            updateServicesList();
+            updateSummary();
+            
+            // Reset fields except client info and terms
+            serviceType.value = '';
+            quantity.value = '1';
+            rentOption.value = '';
+            rentRate.value = '0';
+            size.value = '';
+            materialRate.value = '0';
+            materialDescription.value = '';
+            otherCharges.value = '0';
+            city.value = '';
+            tmaTax.value = '0';
+            locationDetails.value = '';
+        });
+
+        function calculateArea(size) {
+            if (size.includes('x')) {
+                const dimensions = size.split('x');
+                if (dimensions.length === 2) {
+                    return parseFloat(dimensions[0]) * parseFloat(dimensions[1]);
+                }
+            }
+            return parseFloat(size) || 0;
+        }
+
+        function updateServicesList() {
+            servicesList.innerHTML = '';
+            services.forEach(service => {
+                const serviceEl = document.createElement('div');
+                serviceEl.className = 'service-item';
+                serviceEl.innerHTML = `
+                    <div class="service-header">
+                        <div class="service-title">${service.type} (${service.size})</div>
+                        <div class="remove-service" data-id="${service.id}">×</div>
+                    </div>
+                    <p><strong>Location:</strong> ${service.city} - ${service.location}</p>
+                    <p><strong>Rent:</strong> PKR ${service.rentRate.toLocaleString('en-PK')} (${service.rentOption})</p>
+                    <p><strong>Printing:</strong> ${service.materialDescription || 'N/A'} (PKR ${service.printingCost.toLocaleString('en-PK')})</p>
+                    <p><strong>Other Charges:</strong> PKR ${service.otherCharges.toLocaleString('en-PK')}</p>
+                    <p><strong>Total for this item:</strong> PKR ${service.total.toLocaleString('en-PK')}</p>
+                `;
+                servicesList.appendChild(serviceEl);
+            });
+
+            document.querySelectorAll('.remove-service').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.getAttribute('data-id'));
+                    services = services.filter(service => service.id !== id);
+                    updateServicesList();
+                    updateSummary();
+                });
+            });
+        }
+
+        function updateSummary() {
+            summaryBody.innerHTML = '';
+            let subtotal = 0;
+            let totalTmaTax = 0;
+
+            services.forEach(service => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${service.type}</td>
+                    <td>
+                        <p><strong>Rent:</strong> ${service.rentOption} (PKR ${service.rentRate.toLocaleString('en-PK')})</p>
+                        <p><strong>Printing:</strong> ${service.materialDescription} (PKR ${service.printingCost.toLocaleString('en-PK')})</p>
+                        <p><strong>Other:</strong> (PKR ${service.otherCharges.toLocaleString('en-PK')})</p>
+                        <p><strong>Location:</strong> ${service.location}</p>
+                    </td>
+                    <td>${service.quantity}</td>
+                    <td>PKR ${(service.rentRate * service.quantity).toLocaleString('en-PK')}</td>
+                    <td>PKR ${(service.printingCost * service.quantity).toLocaleString('en-PK')}</td>
+                    <td>PKR ${(service.otherCharges * service.quantity).toLocaleString('en-PK')}</td>
+                    <td>PKR ${service.total.toLocaleString('en-PK')}</td>
+                `;
+                summaryBody.appendChild(row);
+                subtotal += service.total;
+                totalTmaTax += service.tmaTax;
+            });
+
+            const grandTotal = subtotal + totalTmaTax;
+            subtotalEl.textContent = `PKR ${subtotal.toLocaleString('en-PK')}`;
+            tmaTaxAmountEl.textContent = `PKR ${totalTmaTax.toLocaleString('en-PK')}`;
+            totalAmountEl.textContent = `PKR ${grandTotal.toLocaleString('en-PK')}`;
+        }
+
+        resetFormBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to reset the form? All data will be lost.')) {
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    if (element.id !== 'terms') {
+                        element.value = '';
+                    }
+                });
+                document.getElementById('quantity').value = '1';
+                document.getElementById('rentRate').value = '0';
+                document.getElementById('materialRate').value = '0';
+                document.getElementById('otherCharges').value = '0';
+                document.getElementById('tmaTax').value = '0';
+                
+                logoData = null;
+                services = [];
+                updateServicesList();
+                updateSummary();
+            }
+        });
+
+        generatePDFBtn.addEventListener('click', function() {
+            const companyName = document.getElementById('companyName').value || 'Quotation';
+            document.getElementById('previewClient').textContent = document.getElementById('companyName').value || 'Client Company';
+            document.getElementById('previewContactPerson').textContent = document.getElementById('contactPerson').value || 'Contact Person';
+            document.getElementById('previewContactNumber').textContent = document.getElementById('contactNumber').value || 'Contact Number';
+            document.getElementById('previewEmail').textContent = document.getElementById('email').value || 'Email';
+            document.getElementById('previewTerms').textContent = document.getElementById('terms').value;
+
+            const previewSummaryBody = document.getElementById('previewSummaryBody');
+            previewSummaryBody.innerHTML = '';
+
+            let subtotal = 0;
+            let totalTmaTax = 0;
+
+            services.forEach(service => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${service.type}</td>
+                    <td>
+                        <p><strong>Rent:</strong> ${service.rentOption} (PKR ${service.rentRate.toLocaleString('en-PK')})</p>
+                        <p><strong>Printing:</strong> ${service.materialDescription} (PKR ${service.printingCost.toLocaleString('en-PK')})</p>
+                        <p><strong>Other:</strong> (PKR ${service.otherCharges.toLocaleString('en-PK')})</p>
+                        <p><strong>Location:</strong> ${service.location}</p>
+                    </td>
+                    <td>${service.quantity}</td>
+                    <td>PKR ${service.total.toLocaleString('en-PK')}</td>
+                `;
+                previewSummaryBody.appendChild(row);
+                subtotal += service.total;
+                totalTmaTax += service.tmaTax;
+            });
+
+            const grandTotal = subtotal + totalTmaTax;
+            document.getElementById('previewSubtotal').textContent = `PKR ${subtotal.toLocaleString('en-PK')}`;
+            document.getElementById('previewTmaTaxAmount').textContent = `PKR ${totalTmaTax.toLocaleString('en-PK')}`;
+            document.getElementById('previewTotalAmount').textContent = `PKR ${grandTotal.toLocaleString('en-PK')}`;
+
+            const { jsPDF } = window.jspdf;
+            const preview = document.getElementById('pdfPreview');
+
+            if (logoData) {
+                const previewLogo = document.getElementById('previewLogo');
+                previewLogo.src = logoData;
+                previewLogo.style.display = 'block';
+            } else {
+                document.getElementById('previewLogo').style.display = 'none';
+            }
+
+            preview.style.display = 'block';
+
+            html2canvas(preview, {
+                scale: 2,
+                useCORS: true
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgWidth = 210;
+                const pageHeight = 297;
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                pdf.save(`${companyName}_Quotation.pdf`);
+                preview.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
