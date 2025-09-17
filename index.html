@@ -400,6 +400,7 @@
                                 <option value="signs">3D Signs & Fabrication</option>
                                 <option value="expo">Expo Stall</option>
                                 <option value="vehicle">Vehicle Branding</option>
+                                <option value="vehicle">Kiosk</option>
                             </select>
                         </div>
                     </div>
@@ -706,6 +707,7 @@
                 row.innerHTML = `
                     <td>${service.type}</td>
                     <td>
+                        <p><strong>Size:</strong> ${service.size}</p>
                         <p><strong>Rent:</strong> ${service.rentOption} (PKR ${service.rentRate.toLocaleString('en-PK')})</p>
                         <p><strong>Printing:</strong> ${service.materialDescription} (PKR ${service.printingCost.toLocaleString('en-PK')})</p>
                         <p><strong>Other:</strong> (PKR ${service.otherCharges.toLocaleString('en-PK')})</p>
@@ -765,12 +767,15 @@
             services.forEach(service => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${service.type}</td>
+                    <td>
+                        <p>${service.type}</p>
+                        <p><strong>Size:</strong> ${service.size}</p>
+                        <p><strong>Location:</strong> ${service.location}</p>
+                    </td>
                     <td>
                         <p><strong>Rent:</strong> ${service.rentOption} (PKR ${service.rentRate.toLocaleString('en-PK')})</p>
                         <p><strong>Printing:</strong> ${service.materialDescription} (PKR ${service.printingCost.toLocaleString('en-PK')})</p>
                         <p><strong>Other:</strong> (PKR ${service.otherCharges.toLocaleString('en-PK')})</p>
-                        <p><strong>Location:</strong> ${service.location}</p>
                     </td>
                     <td>${service.quantity}</td>
                     <td>PKR ${service.total.toLocaleString('en-PK')}</td>
